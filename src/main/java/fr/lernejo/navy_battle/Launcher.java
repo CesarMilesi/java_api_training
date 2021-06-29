@@ -21,6 +21,7 @@ public class Launcher
         }
         server.setExecutor(Executors.newSingleThreadExecutor());
         server.createContext("/ping", new HandlerRequest());
+        server.createContext("/api/game/start", new PostHandler(Integer.parseInt(args[0])));
         server.start();
     }
 }
