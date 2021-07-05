@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,11 +13,13 @@ import java.nio.charset.StandardCharsets;
 
 public class PostHandler implements HttpHandler {
 
-    final int port;
+    private final int port;
+    private final ServerMaster serverMaster;
 
-    public PostHandler(int port)
+    public PostHandler(int port, ServerMaster serverMaster)
     {
         this.port = port;
+        this.serverMaster = serverMaster;
     }
 
     @Override
@@ -28,7 +31,7 @@ public class PostHandler implements HttpHandler {
             String body = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             try {
                 JsonNode corpsRequest = new ObjectMapper().readTree(body);
-                CorpsRequest corps = new CorpsRequest(corpsRequest.get("id").asText(), corpsRequest.get("url").asText(), corpsRequest.get("message").asText());
+                this.serverMaster.setOpponentId(new CorpsRequest(corpsRequest.get("id").asText(), corpsRequest.get("url").asText(), corpsRequest.get("message").asText()));
                 CorpsRequest send = new CorpsRequest("0c575465-21f6-43c9-8a2d-bc64c3ae6241", "http://localhost" + port, "I will crush you!");
                 sendResponse(send, exchange);
             } catch (IOException e) {
