@@ -27,12 +27,20 @@ public class GetHandler implements HttpHandler {
             if (!checkCell(cell)) {
                 new ErrorsHandler().BadRequest(exchange);
             }
-            int missile = parse(cell);
-            playersGame.receivedHit(playersGame, missile, Integer.parseInt(cell.split("")[1]));
+            int colomnMissile = transform(cell);
+            hitResponse(exchange, playersGame.receivedHit(colomnMissile, parse(cell)));
         }
     }
 
     private int parse(String cell) {
+        if (cell.length() > 2) {
+            return 10;
+        }
+        else
+            return Integer.parseInt(cell.split("")[1]);
+    }
+
+    private int transform(String cell) {
         switch (cell.charAt(0)) {
             case 'A': return 0;
             case 'B': return 1;
@@ -55,13 +63,14 @@ public class GetHandler implements HttpHandler {
         return (regex.find()) ? true : false;
     }
 
-    /*public void hitResponse(HttpExchange exchange, String cell) throws IOException {
-        String body = new ObjectMapper().writeValueAsString(new PlayersGame(sunk, false));
+    public void hitResponse(HttpExchange exchange, FireRequest fireRequest) throws IOException {
+        String body = new ObjectMapper().writeValueAsString(fireRequest);
+        System.out.println(body);
         exchange.getResponseHeaders().set("Content-Type", String.format("application/json; charset=%s", StandardCharsets.UTF_8));
         exchange.getResponseHeaders().set("Accept", "application/json");
         exchange.sendResponseHeaders(202, body.length());
         try (OutputStream os = exchange.getResponseBody()) { // (1)
             os.write(body.getBytes());
         }
-    }*/
+    }
 }
