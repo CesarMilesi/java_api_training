@@ -14,7 +14,19 @@ public class PlayersGame {
         }
     }
 
+    // Si pas touché -> 0
+    // Si touché -> 1
+    // Coulé -> -1
+
     public boolean hitBoat(int x, int y) {
         return this.sea[x][y] != 0;
+    }
+
+    public void receivedHit(PlayersGame playersGame, int x, int y) {
+        playersGame.sea[x][y] = -1;
+    }
+
+    public void sentHit(PlayersGame playersGame, int x, int y) {
+        playersGame.opponentSea[x][y] = -1;
     }
 }

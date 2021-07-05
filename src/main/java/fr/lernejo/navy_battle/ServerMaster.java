@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 public class ServerMaster {
     private final PlayersGame playersGame = new PlayersGame();
-    private final ArrayList opponentId = new ArrayList<CorpsRequest>();
+    private final ArrayList opponentId = new ArrayList<String>(1);
 
     public ServerMaster(int port) {
         HttpServer server = null;
@@ -36,7 +36,7 @@ public class ServerMaster {
         try {
             HttpResponse response = client.send(requestPost, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 202) {
-                this.opponentId.add(new CorpsRequest("-1", url, ""));
+                this.opponentId.add(url);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,7 +45,7 @@ public class ServerMaster {
         }
     }
 
-    public void setOpponentId(CorpsRequest corpsRequest) {
-        this.opponentId.add(corpsRequest);
+    public void setOpponentId(String url) {
+        this.opponentId.add(url);
     }
 }

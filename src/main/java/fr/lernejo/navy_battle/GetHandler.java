@@ -27,11 +27,26 @@ public class GetHandler implements HttpHandler {
             if (!checkCell(cell)) {
                 new ErrorsHandler().BadRequest(exchange);
             }
-            getParameters(exchange, cell);
+            int missile = parse(cell);
+            playersGame.receivedHit(playersGame, missile, Integer.parseInt(cell.split("")[1]));
         }
     }
 
-    // 1 - Parser la cell pour
+    private int parse(String cell) {
+        switch (cell.charAt(0)) {
+            case 'A': return 0;
+            case 'B': return 1;
+            case 'C': return 2;
+            case 'D': return 3;
+            case 'E': return 4;
+            case 'F': return 5;
+            case 'G': return 6;
+            case 'H': return 7;
+            case 'I': return 8;
+            case 'J': return 9;
+            default: return -1;
+        }
+    }
 
     public boolean checkCell(String cell)
     {
@@ -40,13 +55,13 @@ public class GetHandler implements HttpHandler {
         return (regex.find()) ? true : false;
     }
 
-    public void hitResponse(HttpExchange exchange, String cell) throws IOException {
-        String body = new ObjectMapper().writeValueAsString(new PlayersGame(Consequence.sunk, false));
+    /*public void hitResponse(HttpExchange exchange, String cell) throws IOException {
+        String body = new ObjectMapper().writeValueAsString(new PlayersGame(sunk, false));
         exchange.getResponseHeaders().set("Content-Type", String.format("application/json; charset=%s", StandardCharsets.UTF_8));
         exchange.getResponseHeaders().set("Accept", "application/json");
         exchange.sendResponseHeaders(202, body.length());
         try (OutputStream os = exchange.getResponseBody()) { // (1)
             os.write(body.getBytes());
         }
-    }
+    }*/
 }

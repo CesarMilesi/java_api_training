@@ -31,7 +31,7 @@ public class PostHandler implements HttpHandler {
             String body = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             try {
                 JsonNode corpsRequest = new ObjectMapper().readTree(body);
-                this.serverMaster.setOpponentId(new CorpsRequest(corpsRequest.get("id").asText(), corpsRequest.get("url").asText(), corpsRequest.get("message").asText()));
+                this.serverMaster.setOpponentId(corpsRequest.get("url").asText());
                 CorpsRequest send = new CorpsRequest("0c575465-21f6-43c9-8a2d-bc64c3ae6241", "http://localhost" + port, "I will crush you!");
                 sendResponse(send, exchange);
             } catch (IOException e) {
