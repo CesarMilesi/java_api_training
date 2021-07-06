@@ -30,7 +30,7 @@ public class ServerMaster {
         server.setExecutor(Executors.newSingleThreadExecutor());
         server.createContext("/ping", new HandlerRequest());
         server.createContext("/api/game/start", new PostHandler(port, this));
-        server.createContext("/api/game/fire", new GetHandler(this.playersGame, serverMaster));
+        server.createContext("/api/game/fire", new GetHandler(this.playersGame, this));
         server.start();
     }
 
