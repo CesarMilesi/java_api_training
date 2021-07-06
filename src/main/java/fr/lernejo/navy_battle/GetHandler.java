@@ -43,10 +43,11 @@ public class GetHandler implements HttpHandler {
 
     private int parse(String cell) {
         if (cell.length() > 2) {
-            return 10;
+            return 9;
         }
-        else
-            return Integer.parseInt(cell.split("")[1]);
+        else {
+            return Integer.parseInt(String.valueOf(cell.charAt(1))) - 1;
+        }
     }
 
     private int transform(String cell) {

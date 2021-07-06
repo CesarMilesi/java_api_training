@@ -14,7 +14,7 @@ public class PlayersGame {
                 opponentSea[i][j] = 0;
             }
         }
-        sea[2][3] = 1;
+        sea[0][0] = 1;
     }
 
     private boolean isGameOver(int id) {
@@ -51,7 +51,7 @@ public class PlayersGame {
             line = random.nextInt(10);
         }
         opponentSea[line][column] = -1;
-        return convertColumn(column) + String.valueOf(line);
+        return convertColumn(column) + String.valueOf(line + 1);
     }
 
     private String convertColumn(int column) {
