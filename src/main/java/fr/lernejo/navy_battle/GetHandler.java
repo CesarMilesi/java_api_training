@@ -74,7 +74,7 @@ public class GetHandler implements HttpHandler {
 
     public void hitResponse(HttpExchange exchange, FireRequest fireRequest) throws IOException {
         String body = new ObjectMapper().writeValueAsString(fireRequest);
-        exchange.getResponseHeaders().set("Content-Type", String.format("application/json; charset=%s", StandardCharsets.UTF_8));
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.getResponseHeaders().set("Accept", "application/json");
         exchange.sendResponseHeaders(202, body.length());
         try (OutputStream os = exchange.getResponseBody()) { // (1)

@@ -57,13 +57,10 @@ public class ServerMaster {
             if (response.statusCode() == 202) {
                 String responseBody = (String)response.body();
                 JsonNode corpsRequest = new ObjectMapper().readTree(responseBody);
-                if (corpsRequest.get("shipLeft").asBoolean() == false) {
+                if (corpsRequest.get("shipLeft").asBoolean() == false)
                     exit(0);
-                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
