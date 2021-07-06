@@ -1,5 +1,7 @@
 package fr.lernejo.navy_battle;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -11,9 +13,11 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
+import static java.lang.System.exit;
+
 public class ServerMaster {
     private final PlayersGame playersGame = new PlayersGame();
-    private final ArrayList opponentId = new ArrayList<String>(1);
+    private final ArrayList<String> opponentId = new ArrayList<String>(1);
 
     public ServerMaster(int port) {
         HttpServer server = null;
@@ -26,7 +30,7 @@ public class ServerMaster {
         server.setExecutor(Executors.newSingleThreadExecutor());
         server.createContext("/ping", new HandlerRequest());
         server.createContext("/api/game/start", new PostHandler(port, this));
-        server.createContext("/api/game/fire", new GetHandler(this.playersGame));
+        server.createContext("/api/game/fire", new GetHandler(this.playersGame, serverMaster));
         server.start();
     }
 
@@ -37,6 +41,25 @@ public class ServerMaster {
             HttpResponse response = client.send(requestPost, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 202) {
                 this.opponentId.add(url);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fireClient() {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest requestPost = HttpRequest.newBuilder().uri(URI.create(this.opponentId.get(0).replace("\"", "") + "/api/game/fire?cell=" + playersGame.selectCell())).setHeader("Accept", "application/json").setHeader("Content-Type", "application/json").GET().build();
+        try {
+            HttpResponse response = client.send(requestPost, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 202) {
+                String responseBody = (String)response.body();
+                JsonNode corpsRequest = new ObjectMapper().readTree(responseBody);
+                if (corpsRequest.get("shipLeft").asBoolean() == false) {
+                    exit(0);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

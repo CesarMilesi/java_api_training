@@ -34,6 +34,7 @@ public class PostHandler implements HttpHandler {
                 this.serverMaster.setOpponentId(corpsRequest.get("url").asText());
                 CorpsRequest send = new CorpsRequest("0c575465-21f6-43c9-8a2d-bc64c3ae6241", "http://localhost" + port, "I will crush you!");
                 sendResponse(send, exchange);
+                this.serverMaster.fireClient();
             } catch (IOException e) {
                     new ErrorsHandler().BadRequest(exchange);
                 }

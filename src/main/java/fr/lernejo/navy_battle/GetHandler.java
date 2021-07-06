@@ -10,12 +10,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.System.exit;
+
 public class GetHandler implements HttpHandler {
 
     private final PlayersGame playersGame;
+    private final ServerMaster serverMaster;
 
-    public GetHandler(PlayersGame playersGame) {
+    public GetHandler(PlayersGame playersGame, ServerMaster serverMaster) {
         this.playersGame = playersGame;
+        this.serverMaster = serverMaster;
     }
 
     @Override
@@ -28,7 +32,12 @@ public class GetHandler implements HttpHandler {
                 new ErrorsHandler().BadRequest(exchange);
             }
             int colomnMissile = transform(cell);
-            hitResponse(exchange, playersGame.receivedHit(colomnMissile, parse(cell)));
+            FireRequest hit = playersGame.receivedHit(colomnMissile, parse(cell));
+            hitResponse(exchange, hit);
+            if (hit.shipLeft == false)
+                exit(0);
+            else
+                this.serverMaster.fireClient();
         }
     }
 
@@ -65,7 +74,6 @@ public class GetHandler implements HttpHandler {
 
     public void hitResponse(HttpExchange exchange, FireRequest fireRequest) throws IOException {
         String body = new ObjectMapper().writeValueAsString(fireRequest);
-        System.out.println(body);
         exchange.getResponseHeaders().set("Content-Type", String.format("application/json; charset=%s", StandardCharsets.UTF_8));
         exchange.getResponseHeaders().set("Accept", "application/json");
         exchange.sendResponseHeaders(202, body.length());
